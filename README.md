@@ -22,7 +22,7 @@ bundle
 Create a plain text file which contains an IP address per line.
 
 ```bash
-bundle exec ruby crawler.rb /path/to/file.txt
+bundle exec ruby scripts/crawler.rb /path/to/file.txt
 ```
 
 This script crawls IP addresses and collects .mobileconfig from the addresses.
