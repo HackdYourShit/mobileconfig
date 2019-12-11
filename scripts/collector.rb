@@ -85,7 +85,7 @@ class Collector
   end
 
   def base_dir
-    @base_dir ||= File.expand_path("./samples/#{host}/", __dir__)
+    @base_dir ||= File.expand_path("../samples/#{host}/", __dir__)
   end
 
   def download_to(basename)
