@@ -25,6 +25,10 @@ class Collector
     end
   end
 
+  def downloaded?
+    Dir.exist? base_dir
+  end
+
   def download
     FileUtils.mkdir_p base_dir
     down = Down::Http.new(default_options)
@@ -32,7 +36,8 @@ class Collector
     mobileconfig_links.each do |link|
       basename = File.basename(link)
       begin
-        down.download(link, destination: download_to(basename))
+        dest = download_to(basename)
+        down.download(link, destination: dest) unless File.exist?(dest)
       rescue Down::Error => e
         puts "Failed to download #{link} (#{e})"
       end
@@ -59,11 +64,15 @@ class Collector
   end
 
   def links
-    return [] if doc.nil?
+    return [] unless doc
 
-    doc.css("a").map do |a|
-      a.get("href")
-    end.compact
+    begin
+      doc.css("a").map do |a|
+        a.get("href")
+      end.compact
+    rescue NoMethodError => _e
+      []
+    end
   end
 
   def to_url(href)
