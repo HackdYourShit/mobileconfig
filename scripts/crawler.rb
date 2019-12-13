@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
 require "parallel"
+require "uri"
 
 require_relative "./collector"
 
 class Crawler
   attr_reader :path_to_list
+
+  SKIP_DOWNLOADED = true
 
   def initialize(path_to_list)
     @path_to_list = path_to_list
@@ -16,6 +19,7 @@ class Crawler
 
     Parallel.each(urls) do |url|
       collector = Collector.new(url)
+      next if SKIP_DOWNLOADED && collector.downloaded?
       next unless collector.mobileconfig?
 
       puts "Found .mobileconfig on #{url}"
@@ -24,13 +28,15 @@ class Crawler
   end
 
   def urls
-    ipv4s.map do |ipv4|
+    hosts.map do |ipv4|
       ["http://#{ipv4}", "https://#{ipv4}"]
     end.flatten
   end
 
-  def ipv4s
-    File.readlines(path_to_list).map(&:chomp)
+  def hosts
+    File.readlines(path_to_list).map(&:chomp).map do |line|
+      URI(line).host
+    end
   end
 
   def valid_input?
