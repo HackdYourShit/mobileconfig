@@ -56,3 +56,6 @@ Gemfile.lock
 .rubocop-https?--*
 
 samples/*/
+unique/*/
+*.zip
+*.csv
