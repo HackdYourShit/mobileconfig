@@ -38,7 +38,7 @@ class Collector
       begin
         dest = download_to(basename)
         down.download(link, destination: dest) unless File.exist?(dest)
-      rescue Down::Error => e
+      rescue Down::Error, ArgumentError => e
         puts "Failed to download #{link} (#{e})"
       end
     end
@@ -86,7 +86,7 @@ class Collector
       body.lines.map(&:strip).select do |line|
         line.include? "location.href"
       end.map do |line|
-        line.split.last.gsub(/"|'|;/, "")
+        line.split(/ |=/).last.gsub(/"|'|;/, "")
       end
     rescue NoMethodError => _e
       []

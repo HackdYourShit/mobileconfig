@@ -30,12 +30,14 @@ class Crawler
   def urls
     hosts.map do |ipv4|
       ["http://#{ipv4}", "https://#{ipv4}"]
-    end.flatten
+    end.flatten.compact.uniq.sort
   end
 
   def hosts
     File.readlines(path_to_list).map(&:chomp).map do |line|
       URI(line).host
+    rescue URI::InvalidURIError => _e
+      nil
     end
   end
 
