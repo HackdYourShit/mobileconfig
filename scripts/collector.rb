@@ -64,12 +64,30 @@ class Collector
   end
 
   def links
+    (a_links + js_links).compact.uniq
+  end
+
+  def a_links
     return [] unless doc
 
     begin
       doc.css("a").map do |a|
         a.get("href")
       end.compact
+    rescue NoMethodError => _e
+      []
+    end
+  end
+
+  def js_links
+    return [] unless body
+
+    begin
+      body.lines.map(&:strip).select do |line|
+        line.include? "location.href"
+      end.map do |line|
+        line.split.last.gsub(/"|'|;/, "")
+      end
     rescue NoMethodError => _e
       []
     end
