@@ -88,7 +88,7 @@ class Collector
       end.map do |line|
         line.split(/ |=/).last.gsub(/"|'|;/, "")
       end
-    rescue NoMethodError => _e
+    rescue NoMethodError, ArgumentError => _e
       []
     end
   end
